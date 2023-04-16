@@ -8,7 +8,7 @@ import (
 )
 
 type Tournament struct {
-	ID              uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Name            string
 	AddressLineOne  string
 	AddressLineTwo  string
