@@ -1,19 +1,21 @@
-package tournament
+package models
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
-type Model struct {
-	gorm.Model
+type Tournament struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	Name            string
 	AddressLineOne  string
 	AddressLineTwo  string
 	AddressPostCode string
 	AddressCity     string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
 }
 
 var validate = validator.New()

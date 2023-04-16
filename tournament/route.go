@@ -9,7 +9,7 @@ func Routes(app *fiber.App, prefix string) {
 		router.Post("/", Create)
 		router.Get("", FindTournaments)
 	})
-	api.Route("/:d", func(router fiber.Router) {
+	api.Route("/:tournamentId", func(router fiber.Router) {
 		router.Delete("", DeleteTournament)
 		router.Get("", FindTournamentById)
 		router.Put("", UpdateTournament)

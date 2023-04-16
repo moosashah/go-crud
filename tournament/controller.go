@@ -6,21 +6,22 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/moosashah/go-crud/initializers"
+	"github.com/moosashah/go-crud/models"
 	"gorm.io/gorm"
 )
 
 func Create(c *fiber.Ctx) error {
-	var payload *CreateTournamentSchema
+	var payload *models.CreateTournamentSchema
 
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
 
-	errors := ValidateStruct(payload)
+	errors := models.ValidateStruct(payload)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errors)
 	}
-	newTournament := Model{
+	newTournament := models.Tournament{
 		Name:            payload.Name,
 		AddressLineOne:  payload.AddressLineOne,
 		AddressLineTwo:  payload.AddressLineTwo,
@@ -46,7 +47,7 @@ func FindTournaments(c *fiber.Ctx) error {
 	intLimit, _ := strconv.Atoi(limit)
 	offset := (intPage - 1) * intLimit
 
-	var tournaments []Model
+	var tournaments []models.Tournament
 	results := initializers.DB.Limit(intLimit).Offset(offset).Find(&tournaments)
 	if results.Error != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "error", "message": results.Error})
@@ -56,12 +57,12 @@ func FindTournaments(c *fiber.Ctx) error {
 
 func UpdateTournament(c *fiber.Ctx) error {
 	tournamentId := c.Params("tournamentId")
-	var payload *UpdateTournamentSchema
+	var payload *models.UpdateTournamentSchema
 
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	var tournament Model
+	var tournament models.Tournament
 	result := initializers.DB.First(&tournament, "id = ?", tournamentId).Updates(&payload)
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -75,7 +76,7 @@ func UpdateTournament(c *fiber.Ctx) error {
 func FindTournamentById(c *fiber.Ctx) error {
 	tournamentId := c.Params("tournamentId")
 
-	var tournament Model
+	var tournament models.Tournament
 	result := initializers.DB.First(&tournament, "id = ?", tournamentId)
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -89,7 +90,7 @@ func FindTournamentById(c *fiber.Ctx) error {
 
 func DeleteTournament(c *fiber.Ctx) error {
 	tournamentId := c.Params("tournamentId")
-	var tournament Model
+	var tournament models.Tournament
 	result := initializers.DB.Delete(&tournament, "id = ?", tournamentId)
 
 	if result.RowsAffected == 0 {
